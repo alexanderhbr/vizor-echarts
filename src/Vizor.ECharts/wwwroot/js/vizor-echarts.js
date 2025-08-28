@@ -231,6 +231,16 @@ window.vizorECharts = {
 		chart.clear();
 	},
 
+	resizeChart: function (id) {
+		var chart = vizorECharts.charts.get(id);
+		if (chart == null) {
+			console.error("Failed to resize chart " + id);
+			return;
+		}
+
+		chart.resize();
+	},
+
 	disposeChart: function (id) {
 		var chart = vizorECharts.charts.get(id);
 		if (chart == null) {
