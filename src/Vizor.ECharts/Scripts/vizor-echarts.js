@@ -106,11 +106,17 @@
 				console.log("MAP");
 				console.log(item);
 			}
-
+			// Handle both 'mapName' and 'name' properties for compatibility
+			var mapName = item.mapName || item.name;
+			
 			if (item.type === "geoJSON") {
-				echarts.registerMap(item.mapName, { geoJSON: item.geoJSON, specialAreas: item.specialAreas });
+				echarts.registerMap(mapName, { geoJSON: item.geoJSON, specialAreas: item.specialAreas });
 			} else if (item.type === "svg") {
-				echarts.registerMap(item.mapName, { svg: item.svg });
+				if (!item.svg) {
+					console.error("SVG content is missing for map:", mapName);
+					continue;
+				}
+				echarts.registerMap(mapName, { svg: item.svg });
 			}
 		}
 	},
