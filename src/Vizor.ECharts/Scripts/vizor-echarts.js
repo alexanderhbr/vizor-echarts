@@ -78,11 +78,8 @@
 			}
 
 			// execute the afterLoad function if required
-			// Use Function constructor for CSP compliance instead of eval
 			if (item.afterLoad != null) {
 				try {
-					// Use new Function() which is CSP-compliant with 'unsafe-eval'
-					// This is safer than eval() as it runs in a more restricted scope
 					const func = new Function('return (' + item.afterLoad + ')')();
 					data = func(data);
 				} catch (error) {
@@ -103,13 +100,12 @@
 		if (mapOptions == null)
 			return;
 
-		// parse the options - try JSON first, fallback to safe eval for JavaScript functions
+		// parse the options - try JSON first, fallback to Function constructor for JavaScript functions
 		var parsedOptions;
 		try {
 			parsedOptions = JSON.parse(mapOptions);
 		} catch (e) {
 			// If JSON parsing fails, it likely contains JavaScript functions
-			// Use Function constructor which is CSP-compliant with 'unsafe-eval'
 			parsedOptions = new Function('return (' + mapOptions + ')')();
 		}
 		for (item of parsedOptions) {
@@ -153,13 +149,12 @@
 		// register GEO maps
 		await vizorECharts.registerMaps(chart, mapOptions);
 
-		// parse the options - try JSON first, fallback to safe eval for JavaScript functions
+		// parse the options - try JSON first, fallback to Function constructor for JavaScript functions
 		var parsedOptions;
 		try {
 			parsedOptions = JSON.parse(chartOptions);
 		} catch (e) {
 			// If JSON parsing fails, it likely contains JavaScript functions
-			// Use Function constructor which is CSP-compliant with 'unsafe-eval'
 			parsedOptions = new Function('return (' + chartOptions + ')')();
 		}
 		if (vizorECharts.logging) {
@@ -187,13 +182,12 @@
 		// register GEO maps
 		await vizorECharts.registerMaps(chart, mapOptions);
 
-		// parse the options - try JSON first, fallback to safe eval for JavaScript functions
+		// parse the options - try JSON first, fallback to Function constructor for JavaScript functions
 		var parsedOptions;
 		try {
 			parsedOptions = JSON.parse(chartOptions);
 		} catch (e) {
 			// If JSON parsing fails, it likely contains JavaScript functions
-			// Use Function constructor which is CSP-compliant with 'unsafe-eval'
 			parsedOptions = new Function('return (' + chartOptions + ')')();
 		}
 
