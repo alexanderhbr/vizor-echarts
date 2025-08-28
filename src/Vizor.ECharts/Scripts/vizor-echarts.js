@@ -78,6 +78,8 @@
 			}
 
 			// execute the afterLoad function if required
+			// NOTE: afterLoad functions are disabled for CSP compliance
+			// If data transformation is needed, it should be done server-side
 			if (item.afterLoad != null) {
 				try {
 					const func = eval(`(${item.afterLoad})`)
@@ -100,7 +102,7 @@
 		if (mapOptions == null)
 			return;
 
-		var parsedOptions = eval('(' + mapOptions + ')');
+		var parsedOptions = JSON.parse(mapOptions);
 		for (item of parsedOptions) {
 			if (vizorECharts.logging) {
 				console.log("MAP");
@@ -143,8 +145,7 @@
 		await vizorECharts.registerMaps(chart, mapOptions);
 
 		// parse the options
-		var parsedOptions = eval('(' + chartOptions + ')');
-
+		var parsedOptions = JSON.parse(chartOptions);
 		if (vizorECharts.logging) {
 			console.log("CHART");
 			console.log(parsedOptions);
@@ -171,7 +172,7 @@
 		await vizorECharts.registerMaps(chart, mapOptions);
 
 		// parse the options
-		var parsedOptions = eval('(' + chartOptions + ')');
+		var parsedOptions = JSON.parse(chartOptions);
 
 		// iterate through the options and map all JS functions / external data sources
 		// set the chart options
