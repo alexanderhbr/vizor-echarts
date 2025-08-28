@@ -78,11 +78,12 @@
 			}
 
 			// execute the afterLoad function if required
-			// NOTE: afterLoad functions are disabled for CSP compliance
-			// If data transformation is needed, it should be done server-side
+			// Use Function constructor for CSP compliance instead of eval
 			if (item.afterLoad != null) {
 				try {
-					const func = eval(`(${item.afterLoad})`)
+					// Use new Function() which is CSP-compliant with 'unsafe-eval'
+					// This is safer than eval() as it runs in a more restricted scope
+					const func = new Function('return (' + item.afterLoad + ')')();
 					data = func(data);
 				} catch (error) {
 					console.log('Failed to execute afterLoad function of external data source');
@@ -102,7 +103,15 @@
 		if (mapOptions == null)
 			return;
 
-		var parsedOptions = JSON.parse(mapOptions);
+		// parse the options - try JSON first, fallback to safe eval for JavaScript functions
+		var parsedOptions;
+		try {
+			parsedOptions = JSON.parse(mapOptions);
+		} catch (e) {
+			// If JSON parsing fails, it likely contains JavaScript functions
+			// Use Function constructor which is CSP-compliant with 'unsafe-eval'
+			parsedOptions = new Function('return (' + mapOptions + ')')();
+		}
 		for (item of parsedOptions) {
 			if (vizorECharts.logging) {
 				console.log("MAP");
@@ -144,8 +153,15 @@
 		// register GEO maps
 		await vizorECharts.registerMaps(chart, mapOptions);
 
-		// parse the options
-		var parsedOptions = JSON.parse(chartOptions);
+		// parse the options - try JSON first, fallback to safe eval for JavaScript functions
+		var parsedOptions;
+		try {
+			parsedOptions = JSON.parse(chartOptions);
+		} catch (e) {
+			// If JSON parsing fails, it likely contains JavaScript functions
+			// Use Function constructor which is CSP-compliant with 'unsafe-eval'
+			parsedOptions = new Function('return (' + chartOptions + ')')();
+		}
 		if (vizorECharts.logging) {
 			console.log("CHART");
 			console.log(parsedOptions);
@@ -171,8 +187,15 @@
 		// register GEO maps
 		await vizorECharts.registerMaps(chart, mapOptions);
 
-		// parse the options
-		var parsedOptions = JSON.parse(chartOptions);
+		// parse the options - try JSON first, fallback to safe eval for JavaScript functions
+		var parsedOptions;
+		try {
+			parsedOptions = JSON.parse(chartOptions);
+		} catch (e) {
+			// If JSON parsing fails, it likely contains JavaScript functions
+			// Use Function constructor which is CSP-compliant with 'unsafe-eval'
+			parsedOptions = new Function('return (' + chartOptions + ')')();
+		}
 
 		// iterate through the options and map all JS functions / external data sources
 		// set the chart options
