@@ -88,4 +88,9 @@
 
 		await JSRuntime.InvokeVoidAsync("vizorECharts.updateChart", Id, chartOpts, mapOpts, fetchOpts);
 	}
+	
+	public async Task ResizeAsync()
+	{
+		await JSRuntime.InvokeVoidAsync("vizorECharts.resizeChart", Id);
+	}
 }
