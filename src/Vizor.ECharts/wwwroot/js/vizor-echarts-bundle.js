@@ -125,6 +125,8 @@ window.vizorECharts = {
 			}
 
 			// execute the afterLoad function if required
+			// NOTE: afterLoad functions are disabled for CSP compliance
+			// If data transformation is needed, it should be done server-side
 			if (item.afterLoad != null) {
 				try {
 					const func = eval(`(${item.afterLoad})`)
@@ -147,17 +149,23 @@ window.vizorECharts = {
 		if (mapOptions == null)
 			return;
 
-		var parsedOptions = eval('(' + mapOptions + ')');
+		var parsedOptions = JSON.parse(mapOptions);
 		for (item of parsedOptions) {
 			if (vizorECharts.logging) {
 				console.log("MAP");
 				console.log(item);
 			}
-
+			// Handle both 'mapName' and 'name' properties for compatibility
+			var mapName = item.mapName || item.name;
+			
 			if (item.type === "geoJSON") {
-				echarts.registerMap(item.mapName, { geoJSON: item.geoJSON, specialAreas: item.specialAreas });
+				echarts.registerMap(mapName, { geoJSON: item.geoJSON, specialAreas: item.specialAreas });
 			} else if (item.type === "svg") {
-				echarts.registerMap(item.mapName, { svg: item.svg });
+				if (!item.svg) {
+					console.error("SVG content is missing for map:", mapName);
+					continue;
+				}
+				echarts.registerMap(mapName, { svg: item.svg });
 			}
 		}
 	},
@@ -184,8 +192,7 @@ window.vizorECharts = {
 		await vizorECharts.registerMaps(chart, mapOptions);
 
 		// parse the options
-		var parsedOptions = eval('(' + chartOptions + ')');
-
+		var parsedOptions = JSON.parse(chartOptions);
 		if (vizorECharts.logging) {
 			console.log("CHART");
 			console.log(parsedOptions);
@@ -212,7 +219,7 @@ window.vizorECharts = {
 		await vizorECharts.registerMaps(chart, mapOptions);
 
 		// parse the options
-		var parsedOptions = eval('(' + chartOptions + ')');
+		var parsedOptions = JSON.parse(chartOptions);
 
 		// iterate through the options and map all JS functions / external data sources
 		// set the chart options
